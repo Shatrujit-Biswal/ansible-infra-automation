@@ -1,0 +1,32 @@
+- name: Install MariaDB server
+  ansible.builtin.apt:
+    update_cache: yes
+    name: mariadb-server
+    state: present
+
+- name: Start and enable MariaDB service
+  ansible.builtin.service:
+    name: mariadb
+    state: started
+    enabled: yes
+
+- name: Install PyMySQL (Python MySQL library)
+  ansible.builtin.apt:
+    name: python3-pymysql
+    state: present
+    
+- name: Create a new database 
+  community.mysql.mysql_db:
+    name: "{{dbname}}"
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: Create database user
+  community.mysql.mysql_user:
+    name: "{{dbuser}}"
+    password: "{{dbpass}}"
+    priv: '*.*:ALL'
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+  register: dbout
+

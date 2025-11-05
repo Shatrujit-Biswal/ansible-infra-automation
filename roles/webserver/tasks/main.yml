@@ -1,0 +1,17 @@
+---
+- name: Install "{{web_package}}"
+  ansible.builtin.package:
+    update_cache: yes
+    name: "{{web_package}}"
+    state: present
+
+- name: Start Apache "{{web_service}}"
+  ansible.builtin.service:
+    name: "{{web_service}}"
+    state: started
+    enabled: yes
+
+- name: Deploy index file
+  ansible.builtin.template:
+    src: "{{ web_index_template }}"
+    dest: "{{ web_root }}/index.html"

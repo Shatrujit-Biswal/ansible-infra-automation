@@ -1,0 +1,62 @@
+---
+- name: Install NTP on Ubuntu
+  apt:
+    name: "{{item}}"
+    state: present
+    update_cache: yes
+  when: ansible_distribution == "Ubuntu"
+  loop:
+    - ntp
+    - wget
+    - git
+    - zip
+    - unzip
+
+- name: Install NTP on Red Hat
+  yum:
+    name: "{{item}}"
+    state: present
+  when: ansible_distribution == "RedHat"
+  loop:
+    - chrony
+    - wget
+    - git
+    - zip
+    - unzip
+
+- name: Start and enable NTP service on Ubuntu
+  service:
+    name: ntp
+    state: started
+    enabled: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: Start and enable NTP service on Red Hat
+  service:
+    name: chronyd
+    state: started
+    enabled: yes
+  when: ansible_distribution == "RedHat"
+
+- name: Banner file
+  copy:
+    content: '#This server manage my Ansible. No manual changes'
+    dest: /etc/motd
+
+- name: Deploy ntp agent conf on redhat
+  template:
+    src: ntpconf_redhat.j2
+    dest: /etc/chrony.conf
+    backup: yes
+  when: ansible_distribution == "RedHat"
+  notify:
+    - reStart NTP service on Red Hat
+
+- name: Deploy ntp agent conf on "Ubuntu"
+  template:
+    src: ntpconf_ubuntu.j2
+    dest: /etc/ntpsec/ntp.conf
+    backup: yes
+  when: ansible_distribution == "Ubuntu"
+  notify:
+    - reStart NTP service on Ubuntu

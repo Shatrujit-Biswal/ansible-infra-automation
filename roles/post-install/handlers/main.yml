@@ -1,0 +1,18 @@
+#SPDX-License-Identifier: MIT-0
+---
+# handlers file for post-install
+
+- name: reStart NTP service on Ubuntu
+  service:
+    name: ntp
+    state: restarted
+    enabled: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: reStart NTP service on Red Hat
+  service:
+    name: chronyd
+    state: restarted
+    enabled: yes
+  when: ansible_distribution == "RedHat"
+

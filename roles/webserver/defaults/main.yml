@@ -1,0 +1,6 @@
+# Web server defaults based on OS
+web_package: "{{ 'apache2' if ansible_facts['os_family'] == 'Debian' else 'httpd' }}"
+web_service: "{{ 'apache2' if ansible_facts['os_family'] == 'Debian' else 'httpd' }}"
+web_root: /var/www/html
+web_index_template: index.html.j2
+
